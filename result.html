@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+  <script>
+  
+  var ROW = prompt('Найти наименьшее общее кратное для ряда чисел от 1 до (max=20) ',20);
+    // проверяем существование элемента в массиве
+    function in_array(value, array) {
+      for (var i = 0; i < array.length; i++) {
+        if (array[i] == value) return true;
+      }
+      return false;
+    }
+    // раскладываем число val на простые множители, возвращаем их в массиве  nmbrarr
+    function getSimple(val, nmbrarr) {
+      var simple = [19, 17, 13, 11, 7, 5, 3, 2],
+        fact;
+
+      for (i = 0; i <= simple.length; i++) {
+
+        if (val % simple[i] == 0) {
+          fact = val / simple[i];
+          nmbrarr.push(simple[i]);
+
+          if (fact != 1) {
+            getSimple(fact, nmbrarr);
+          } else {
+            break;
+          }
+
+        }
+      }
+      return nmbrarr;
+    }
+
+
+    // считаем число вхождений элемента в массив
+    function countDuble(num, arr) {
+      var idx = arr.indexOf(num),
+        count = 0;
+      while (idx != -1) {
+        count++;
+        idx = arr.indexOf(num, idx + 1);
+      }
+      return count;
+    }
+
+
+    var res = document.createElement('div'),
+    unicarr = [];
+
+  // перебираем исходный ряд чисел 
+    for (j = ROW; j >= 1; j--) {
+
+      var tmparr = [],
+        nmbr = [],
+        diff=null;
+      // раскладываем число на простые множители
+      tmparr = getSimple(j, nmbr);
+       
+      tmparr.forEach(function(item) {
+        
+        var countDubleItem = countDuble(item, unicarr);
+        // если число - максимальное из данного ряда - запоминаем в результирующий массив   
+        if (j == ROW) {
+          unicarr.push(item);
+        } 
+        else {
+          // если простого множителя нет в результирующем массиве - добавляем его туда
+          if (!in_array(item, unicarr)) {
+            unicarr.push(item);
+          } else {
+            // считаем количество одинаковых множителей в результирующем массиве и сравниваем с количеством таких же множителей в разложении числа 
+            // если в результирующем массиве их не хватает - добавляем
+            if(countDubleItem!=0) {
+              if(!diff && diff!==0)  diff = countDubleItem - countDuble(item, tmparr); 
+             
+              if (diff < 0) {
+                unicarr.push(item);
+                diff++;
+              }
+            }
+            else {
+              unicarr.push(item);
+            }
+          }
+        }
+        
+      });
+
+
+      nmbr = [];
+    }
+
+    // перемножаем элементы результирующего массива
+    var result = unicarr.reduce(function(mult, current) {
+      return mult * current;
+    }, 1);
+
+    document.body.appendChild(res);
+    res.innerHTML = 'НОК: ' + result
+  </script>
+
+</body>
+
+</html>
